@@ -127,3 +127,5 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
     ]
 }
+
+APPEND_SLASH = False

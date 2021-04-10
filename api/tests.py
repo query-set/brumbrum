@@ -1,3 +1,9 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 
-# Create your tests here.
+
+class CarViewSetTests(APITestCase):
+    def setUp(self):
+        pass
+
+    def test_create_car(self):
+        assert True
