@@ -1,11 +1,11 @@
 # API
 
-## Cars
+## 1. Cars
 
 ### `POST /cars`
 
 Request body should contain car make and model name.
-Based on this data, its existence should be checked [here][https://vpic.nhtsa.dot.gov/api/]
+Based on this data, its existence should be checked [here](https://vpic.nhtsa.dot.gov/api/)
 If the car doesn't exist - return an error.
 If the car exists - it should be saved in the database.
 
@@ -44,7 +44,7 @@ Should fetch a list of all cars already present in application database with the
 Should delete the car with the given id from database.
 If the car doesn't exist in database - return an error.
 
-## Rate
+## 2. Rate
 
 ### `POST /rate`
 
@@ -58,7 +58,7 @@ Add a rate for a car from 1 to 5.
 }
 ```
 
-## Popular
+## 3. Popular
 
 ### `GET /popular`
 

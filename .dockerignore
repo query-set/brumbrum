@@ -1,0 +1,7 @@
+*.sqlite3
+.pylintrc
+
+**/__pycache__/
+venv/
+
+requests.http

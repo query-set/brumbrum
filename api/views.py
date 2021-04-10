@@ -27,8 +27,7 @@ class CarViewSet(
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     def post(self, request, *args, **kwargs) -> Response:
-        # TODO
-        # validate the model existence against following page:
+        # TODO: validate the model existence against following page:
         # https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/honda?format=json
         return None
 
