@@ -1,5 +1,7 @@
 # API
 
+## Cars
+
 ### `POST /cars`
 
 Request body should contain car make and model name.
@@ -12,23 +14,6 @@ If the car exists - it should be saved in the database.
 {
   "make" : "Volkswagen",
   "model" : "Golf",
-}
-```
-
-### `DELETE /cars/{ id }`
-
-Should delete the car with the given id from database.
-If the car doesn't exist in database - return an error.
-
-### `POST /rate`
-
-Add a rate for a car from 1 to 5.
-
-`Content-Type: application/json;charset=UTF-8`
-```json
-{
-  "car_id" : 1,
-  "rating" : 5,
 }
 ```
 
@@ -53,6 +38,27 @@ Should fetch a list of all cars already present in application database with the
 	}
 ]
 ```
+
+### `DELETE /cars/{ id }`
+
+Should delete the car with the given id from database.
+If the car doesn't exist in database - return an error.
+
+## Rate
+
+### `POST /rate`
+
+Add a rate for a car from 1 to 5.
+
+`Content-Type: application/json;charset=UTF-8`
+```json
+{
+  "car_id" : 1,
+  "rating" : 5,
+}
+```
+
+## Popular
 
 ### `GET /popular`
 
