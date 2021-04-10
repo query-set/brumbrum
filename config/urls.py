@@ -17,12 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from api.views import CarViewSet
+from api.views import CarViewSet, RateView, PopularView
 
 router = routers.DefaultRouter()
 router.register("cars", CarViewSet, basename="cars")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("rate/", RateView.as_view(), name="rate"),
+    path("popular/", PopularView.as_view(), name="popular"),
     path("", include(router.urls)),
 ]
