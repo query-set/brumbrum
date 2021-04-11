@@ -3,11 +3,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import Car
+from api.models import Car, Rating
 from api.serializers import (
     CarCreateSerializer,
     CarListSerializer,
     CarPopularListSerializer,
+    RateSerializer,
 )
 
 
@@ -28,16 +29,14 @@ class CarViewSet(
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
-    def create(self, request, *args, **kwargs) -> Response:
-        serializer = CarCreateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def destroy(self, request, *args, **kwargs):
+        pass
 
 
-class RateView(APIView):
-    def post(self, request, *args, **kwargs) -> Response:
-        # TODO
-        return None
+class RateView(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+    queryset = Rating.objects.all()
+    serializer_class = RateSerializer
 
 
 class PopularView(APIView):

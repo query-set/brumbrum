@@ -21,10 +21,11 @@ from api.views import CarViewSet, RateView, PopularView
 
 router = routers.DefaultRouter()
 router.register("cars", CarViewSet, basename="cars")
+router.register("rate", RateView, basename="rate")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("rate/", RateView.as_view(), name="rate"),
+    # path("rate", RateView.as_view({"post": "create"}), name="rate"),
     path("popular/", PopularView.as_view(), name="popular"),
     path("", include(router.urls)),
 ]

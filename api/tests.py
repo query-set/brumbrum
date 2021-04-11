@@ -1,8 +1,10 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
+from api.models import Car
 
-class CarViewSetTests(APITestCase):
+
+class CarCreateViewSetTests(APITestCase):
     def setUp(self):
         self.url = reverse("cars-list")
         self.data = {"make": "honda", "model": "civic"}
@@ -31,11 +33,45 @@ class CarViewSetTests(APITestCase):
         data = {"make": "honda", "model": "blablabla"}
         response = self.client.post(self.url, data=data)
         assert response.status_code == 400, response.data
-        assert response.data['non_field_errors'][0] == "Model not found."
+        assert response.data["non_field_errors"][0] == "Model not found."
 
     def test_create_car_with_make_that_does_not_exist(self):
         data = {"make": "blablabla", "model": "civic"}
         response = self.client.post(self.url, data=data)
         assert response.status_code == 400, response.data
         error_string = f"Cannot find models with '{data['make']}' make."
-        assert response.data['non_field_errors'][0] == error_string
+        assert response.data["non_field_errors"][0] == error_string
+
+    def test_create_car_that_already_exists_in_the_database(self):
+        response = self.client.post(self.url, data=self.data)
+        assert response.status_code == 201, response.data
+        response = self.client.post(self.url, data=self.data)
+        assert response.status_code == 400, response.data
+        assert "already exists in the database" in response.data["non_field_errors"][0]
+
+
+class CarListViewSetTests(APITestCase):
+    def url(self):
+        return reverse("cars-list")
+
+    def setUp(self):
+        self.car = Car.objects.create(make="honda", model="civic")
+
+    def test_cars_fields(self):
+        response = self.client.get(self.url())
+        assert response.status_code == 200, response.data
+        for field in ["id", "make", "model", "avg_rating"]:
+            assert field in response.data[0].keys(), (field, response.data)
+
+    def test_list_more_than_one_car(self):
+        Car.objects.create(make="honda", model="accord")
+        response = self.client.get(self.url())
+        assert response.status_code == 200, response.data
+        assert len(response.data) == 2, response.data
+
+
+class RateTests(APITestCase):
+    def setUp(self):
+        self.url = reverse("rate")
+        self.car = Car.objects.create(make="honda", model="civic")
+        self.data = {"make": "honda", "model": "civic"}
