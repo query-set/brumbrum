@@ -15,10 +15,10 @@ class Car(models.Model):
         """Returns number of given rates on car."""
         return Rating.objects.filter(car_id=self.id).count()
 
-    def recalculate_car_rating(self, car_id: int):
-        rating = Rating.objects.filter(car_id=car_id).aggregate(models.Avg("rating"))
+    def recalculate_car_rating(self, car_id):
+        query = Rating.objects.filter(car_id=car_id).aggregate(models.Avg("rating"))
         self._meta.model.objects.filter(id=car_id).update(
-            avg_rating=rating["rating__avg"]
+            avg_rating=query["rating__avg"]
         )
 
 
@@ -30,5 +30,5 @@ class Rating(models.Model):
 
     def save(self, **kwargs):
         """On every car's rate change updates the car's average rating."""
-        Car().recalculate_car_rating(self.car_id.pk)
         super().save(**kwargs)
+        Car().recalculate_car_rating(self.car_id.pk)

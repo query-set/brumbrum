@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,11 +28,6 @@ class CarViewSet(
 
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
-
-    def destroy(self, request, *args, **kwargs):
-        # lookup_field = 'pk'
-        # TODO: remove cars
-        pass
 
 
 class RateView(mixins.CreateModelMixin, viewsets.GenericViewSet):

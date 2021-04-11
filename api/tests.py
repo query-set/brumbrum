@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from api.models import Car, Rating
 
 
-class CarCreateViewSetTests(APITestCase):
+class CarCreateViewTests(APITestCase):
     @property
     def url(self):
         return reverse("cars-list")
@@ -53,7 +53,7 @@ class CarCreateViewSetTests(APITestCase):
         assert "already exists in the database" in response.data["non_field_errors"][0]
 
 
-class CarListViewSetTests(APITestCase):
+class CarListViewTests(APITestCase):
     @property
     def url(self):
         return reverse("cars-list")
@@ -74,18 +74,40 @@ class CarListViewSetTests(APITestCase):
         assert len(response.data) == 2, response.data
 
 
-class RateTests(APITestCase):
+class CarDeleteViewTest(APITestCase):
+    @property
+    def url(self):
+        return reverse("cars-list")
+
     def setUp(self):
-        self.url = reverse("rate-list")
+        self.car = Car.objects.create(make="honda", model="civic")
+
+    def test_delete_existing_car(self):
+        url = f"{self.url}/{self.car.id}"
+        response = self.client.delete(url)
+        assert response.status_code == 204, response.data
+
+    def test_delete_not_existing_car(self):
+        url = f"{self.url}/999"
+        response = self.client.delete(url)
+        assert response.status_code == 404, response.data
+        assert response.data["detail"] == "Not found."
+
+
+class RateTests(APITestCase):
+    @property
+    def url(self):
+        return reverse("rate-list")
+
+    def setUp(self):
         self.car = Car.objects.create(make="honda", model="civic")
 
     def test_rate_car(self):
-        # TODO: to be continued
         data = {"car_id": self.car.id, "rating": 5}
         response = self.client.post(self.url, data=data)
         assert response.status_code == 201, response.data
         self.car.refresh_from_db()
-        assert self.car.avg_rating == 5.0
+        assert self.car.avg_rating == 5.0, self.car.avg_rating
         data = {"car_id": self.car.id, "rating": 1}
         response = self.client.post(self.url, data=data)
         assert response.status_code == 201, response.data
