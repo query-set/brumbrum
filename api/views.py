@@ -30,6 +30,7 @@ class CarViewSet(
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     def destroy(self, request, *args, **kwargs):
+        # TODO: remove cars
         pass
 
 
@@ -42,11 +43,12 @@ class RateView(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class PopularView(APIView):
     """View to list cars by the number of ratings."""
 
+    permission_classes = [AllowAny]
+
     def get_queryset(self):
-        # TODO: get cars by the number of given rates
-        return Car.object.order_by("-rating")
+        return sorted(Car.objects.all(), key=lambda car: car.rates_number, reverse=True)
 
     def get(self, request, *args, **kwargs) -> Response:
         queryset = self.get_queryset()
-        data = CarPopularListSerializer(queryset, many=True)
-        return Response(data)
+        serializer = CarPopularListSerializer(queryset, many=True)
+        return Response(serializer.data)

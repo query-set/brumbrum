@@ -91,7 +91,7 @@ class RateTests(APITestCase):
     def test_rate_not_existing_car(self):
         data = {"car_id": 5, "rating": 5}
         response = self.client.post(self.url, data=data)
-        error_string = "Invalid pk \"5\" - object does not exist."
+        error_string = 'Invalid pk "5" - object does not exist.'
         assert response.status_code == 400, response.data
         assert error_string in response.data["car_id"][0]
 
@@ -108,3 +108,11 @@ class RateTests(APITestCase):
         assert response.status_code == 400, response.data
         error_string = "Ensure this value is greater than or equal to 1."
         assert error_string in response.data["rating"][0]
+
+
+class PopularVievTest(APITestCase):
+    def setUp(self):
+        pass
+
+    def test_list_by_popular(self):
+        pass
