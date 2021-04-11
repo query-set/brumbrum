@@ -15,12 +15,14 @@ and docker will take care about the rest.
 
 ## API usage
 
-### Cars
+### 1. Cars
 
-#### `POST /cars`
+#### 1.1 `POST /cars`
 
 Request:
-`curl -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"make\": \"honda\", \"model\": \"civic\"} 0.0.0.0:8000/cars`
+```console
+curl -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"make\": \"honda\", \"model\": \"civic\"} 0.0.0.0:8000/cars
+```
 
 Response:
 ```json
@@ -34,10 +36,12 @@ Status code: `201 CREATED`
 
 *Note*: All names of _make_ or _model_ will be lowercased.
 
-#### `GET /cars`
+#### 1.2 `GET /cars`
 
 Request:
-`curl -X GET -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/cars`
+```console
+curl -X GET -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/cars
+```
 
 Response:
 ```json
@@ -59,20 +63,24 @@ Response:
 
 Status code: `200 OK`
 
-#### `DELETE /cars/<id>`
+#### 1.3 `DELETE /cars/<id>`
 
 Request:
-`curl -X DELETE -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/cars/2`
+```console
+curl -X DELETE -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/cars/2
+```
 
 Response:
 Blank response with status code `204 NO CONTENT`
 
-### Rate
+### 2. Rate
 
-#### `POST /rate`
+#### 2.1 `POST /rate`
 
 Request:
-`curl -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"car_id\": 1, \"rating\": 5} 0.0.0.0:8000/rate`
+```console
+curl -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"car_id\": 1, \"rating\": 5} 0.0.0.0:8000/rate
+```
 
 Response:
 ```json
@@ -84,12 +92,14 @@ Response:
 
 Status code: `201 CREATED`
 
-### Popular
+### 3. Popular
 
-#### `GET /popular`
+#### 3.1 `GET /popular`
 
 Request:
-`curl -X GET -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/popular`
+```console
+curl -X GET -H "Content-Type: application/json;charset=UTF-8" 0.0.0.0:8000/popular
+```
 
 Response:
 ```json
