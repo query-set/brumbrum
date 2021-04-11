@@ -18,6 +18,7 @@ class CarViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    """General view set CRUD-alike for car operations."""
     default_serializer_class = CarListSerializer
     permission_classes = [AllowAny]
     queryset = Car.objects.all()
