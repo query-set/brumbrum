@@ -5,8 +5,11 @@ from api.models import Car, Rating
 
 
 class CarCreateViewSetTests(APITestCase):
+    @property
+    def url(self):
+        return reverse("cars-list")
+
     def setUp(self):
-        self.url = reverse("cars-list")
         self.data = {"make": "honda", "model": "civic"}
 
     def test_create_car(self):
@@ -30,16 +33,16 @@ class CarCreateViewSetTests(APITestCase):
         assert response.data["make"][0] == "This field is required."
 
     def test_create_model_that_does_not_exist_in_the_api_db(self):
-        data = {"make": "honda", "model": "blablabla"}
-        response = self.client.post(self.url, data=data)
+        self.data["model"] = "blablabla"
+        response = self.client.post(self.url, data=self.data)
         assert response.status_code == 400, response.data
         assert response.data["non_field_errors"][0] == "Model not found."
 
     def test_create_car_with_make_that_does_not_exist(self):
-        data = {"make": "blablabla", "model": "civic"}
-        response = self.client.post(self.url, data=data)
+        self.data["make"] = "blablabla"
+        response = self.client.post(self.url, data=self.data)
         assert response.status_code == 400, response.data
-        error_string = f"Cannot find models with '{data['make']}' make."
+        error_string = f"Cannot find models with '{self.data['make']}' make."
         assert response.data["non_field_errors"][0] == error_string
 
     def test_create_car_that_already_exists_in_the_database(self):
@@ -51,6 +54,7 @@ class CarCreateViewSetTests(APITestCase):
 
 
 class CarListViewSetTests(APITestCase):
+    @property
     def url(self):
         return reverse("cars-list")
 
@@ -58,14 +62,14 @@ class CarListViewSetTests(APITestCase):
         self.car = Car.objects.create(make="honda", model="civic")
 
     def test_cars_fields(self):
-        response = self.client.get(self.url())
+        response = self.client.get(self.url)
         assert response.status_code == 200, response.data
         for field in ["id", "make", "model", "avg_rating"]:
             assert field in response.data[0].keys(), (field, response.data)
 
     def test_list_more_than_one_car(self):
         Car.objects.create(make="honda", model="accord")
-        response = self.client.get(self.url())
+        response = self.client.get(self.url)
         assert response.status_code == 200, response.data
         assert len(response.data) == 2, response.data
 

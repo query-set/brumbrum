@@ -30,11 +30,14 @@ class CarViewSet(
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     def destroy(self, request, *args, **kwargs):
+        # lookup_field = 'pk'
         # TODO: remove cars
         pass
 
 
 class RateView(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """View used to post a rate on car."""
+
     permission_classes = [AllowAny]
     queryset = Rating.objects.all()
     serializer_class = RateSerializer
