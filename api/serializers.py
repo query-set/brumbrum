@@ -1,12 +1,15 @@
 import json
+import socket
 from urllib.request import urlopen
 
 from rest_framework import serializers
 
 from api.models import Car, Rating
+from api.validators import validate_if_car_exists, validate_new_car
 
 
 VEHICLES_API = "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/{}?format=json"
+TIMEOUT = 5
 
 # Review note:
 # whole serializer could be inherited from `CarCreateSerializer`
@@ -18,26 +21,29 @@ class CarCreateSerializer(serializers.ModelSerializer):
         model = Car
         fields = ["make", "model"]
 
+    @staticmethod
+    def get_api_data(url: str) -> dict:
+        try:
+            response = urlopen(url, timeout=TIMEOUT)
+        except socket.timeout as e:
+            raise serializers.ValidationError(e)
+
+        if response.code != 200:
+            raise serializers.ValidationError("Cannot connect to API.")
+        return json.load(response)
+
     def validate(self, attrs):
         make = attrs.get("make").lower()
         model = attrs.get("model").lower()
-
         url = VEHICLES_API.format(make)
-        response = urlopen(url)
-        if response.code != 200:
-            raise serializers.ValidationError("Cannot connect to API.")
-        api_data = json.load(response)
-        if len(api_data["Results"]) == 0:
-            raise serializers.ValidationError(f"Cannot find models with '{make}' make.")
-        all_models = [m["Model_Name"].lower() for m in api_data["Results"]]
-        if model not in all_models:
-            raise serializers.ValidationError("Model not found.")
+        api_data = self.get_api_data(url)
 
-        if Car.objects.filter(make=make, model=model).exists():
-            raise serializers.ValidationError(
-                f"Car {make} {model} already exists in the database."
-            )
+        validate_if_car_exists(api_data, make, model)
+        validate_new_car(make, model)
+
         return {"make": make, "model": model}
+
+
 
 
 class CarListSerializer(serializers.ModelSerializer):
