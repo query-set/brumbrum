@@ -72,6 +72,39 @@ class CarListViewSetTests(APITestCase):
 
 class RateTests(APITestCase):
     def setUp(self):
-        self.url = reverse("rate")
+        self.url = reverse("rate-list")
         self.car = Car.objects.create(make="honda", model="civic")
-        self.data = {"make": "honda", "model": "civic"}
+
+    def test_rate_car(self):
+        # TODO: to be continued
+        data = {"car_id": self.car.id, "rating": 5}
+        response = self.client.post(self.url, data=data)
+        assert response.status_code == 201, response.data
+        self.car.refresh_from_db()
+        assert self.car.avg_rating == 5.0
+        data = {"car_id": self.car.id, "rating": 1}
+        response = self.client.post(self.url, data=data)
+        assert response.status_code == 201, response.data
+        self.car.refresh_from_db()
+        assert self.car.avg_rating == 3.0
+
+    def test_rate_not_existing_car(self):
+        data = {"car_id": 5, "rating": 5}
+        response = self.client.post(self.url, data=data)
+        error_string = "Invalid pk \"5\" - object does not exist."
+        assert response.status_code == 400, response.data
+        assert error_string in response.data["car_id"][0]
+
+    def test_rate_car_with_too_high_grade(self):
+        data = {"car_id": self.car.id, "rating": 6}
+        response = self.client.post(self.url, data=data)
+        assert response.status_code == 400, response.data
+        error_string = "Ensure this value is less than or equal to 5."
+        assert error_string in response.data["rating"][0]
+
+    def test_rate_car_with_too_low_grade(self):
+        data = {"car_id": self.car.id, "rating": 0}
+        response = self.client.post(self.url, data=data)
+        assert response.status_code == 400, response.data
+        error_string = "Ensure this value is greater than or equal to 1."
+        assert error_string in response.data["rating"][0]
