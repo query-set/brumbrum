@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
-from api.models import Car
+from api.models import Car, Rating
 
 
 class CarCreateViewSetTests(APITestCase):
@@ -110,9 +110,18 @@ class RateTests(APITestCase):
         assert error_string in response.data["rating"][0]
 
 
-class PopularVievTest(APITestCase):
+class PopularViewTest(APITestCase):
     def setUp(self):
-        pass
+        self.url = reverse("popular")
+        self.car = Car.objects.create(make="honda", model="civic")
+        self.car2 = Car.objects.create(make="honda", model="accord")
+        Rating.objects.create(car_id=self.car, rating=1.0)
+        Rating.objects.create(car_id=self.car, rating=2.0)
+        Rating.objects.create(car_id=self.car2, rating=1.0)
 
     def test_list_by_popular(self):
-        pass
+        response = self.client.get(self.url)
+        assert response.status_code == 200, response.data
+        assert len(response.data) == 2
+        assert response.data[0]["id"] == self.car.id
+        assert response.data[1]["id"] == self.car2.id
