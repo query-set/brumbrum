@@ -6,7 +6,7 @@ from rest_framework import serializers
 from api.models import Car
 
 
-VALIDATION_API = (
+VEHICLES_API = (
     "https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformake/{}?format=json"
 )
 
@@ -20,14 +20,20 @@ class CarCreateSerializer(serializers.ModelSerializer):
         model = Car
         fields = ["make", "model"]
 
-    def validate(self, data):
-        url = VALIDATION_API.format(data.get("make").lower())
+    def validate(self, attrs):
+        url = VEHICLES_API.format(attrs.get("make").lower())
         response = urlopen(url)
+        if response.code != 200:
+            raise serializers.ValidationError("Cannot connect to API.")
         api_data = json.load(response)
+        if len(api_data["Results"]) == 0:
+            raise serializers.ValidationError(
+                f"Cannot find models with '{attrs['make']}' make."
+            )
         all_models = [m["Model_Name"].lower() for m in api_data["Results"]]
-        if data["model"].lower() not in all_models:
-            raise serializers.ValidationError("Model not found")
-        return data
+        if attrs["model"].lower() not in all_models:
+            raise serializers.ValidationError("Model not found.")
+        return attrs
 
 
 class CarListSerializer(serializers.ModelSerializer):
