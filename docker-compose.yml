@@ -1,0 +1,36 @@
+version: '3.8'
+
+
+x-app: &django-default
+  build:
+    context: .
+    args:
+      environment: prod
+
+services:
+  static-code-analysis:
+    build:
+      context: .
+      args:
+        environment: prod
+    command: black /app
+
+  django-init:
+    <<: *django-default
+    command: ./manage.py migrate
+
+  django-check-migrations:
+    <<: *django-default
+    command: ./manage.py makemigrations --check --dry-run
+
+  django-test:
+    <<: *django-default
+    command: ./manage.py test
+
+  django-dev:
+    <<: *django-default
+    tty: true
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
