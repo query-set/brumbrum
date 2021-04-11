@@ -16,4 +16,6 @@ COPY . .
 ENV DJANGO_SETTINGS_MODULE=config.settings
 # EXPOSE 8000  # has no effect on heroku
 
+RUN ./manage.py migrate
+
 CMD gunicorn config.wsgi --workers 4 --bind 0.0.0.0:$PORT
