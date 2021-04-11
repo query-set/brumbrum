@@ -44,8 +44,6 @@ class CarCreateSerializer(serializers.ModelSerializer):
         return {"make": make, "model": model}
 
 
-
-
 class CarListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
