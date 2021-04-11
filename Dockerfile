@@ -14,7 +14,6 @@ RUN python -m pip install --upgrade pip \
 COPY . .
 
 ENV DJANGO_SETTINGS_MODULE=config.settings
-EXPOSE 8000
+# EXPOSE 8000  # has no effect on heroku
 
-# CMD gunicorn config.wsgi --workers 4 --bind 0.0.0.0:$PORT
-CMD gunicorn config.wsgi --workers 4 --bind 0.0.0.0:8000
+CMD gunicorn config.wsgi --workers 4 --bind 0.0.0.0:$PORT
